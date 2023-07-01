@@ -25,25 +25,25 @@ import jakarta.validation.Valid;
 @RestController // this is the rest api file
 public class UserJpaResource {
 
-    private UserRepository repository;
+    private UserRepository userRepository;
     private PostRepository PostRepository;
 
-    public UserJpaResource(UserRepository repository,PostRepository PostRepository) {
+    public UserJpaResource(UserRepository userRepository,PostRepository PostRepository) {
 
-        this.repository = repository;
+        this.userRepository = userRepository;
         this.PostRepository = PostRepository;
     }
 
     // api for get all users
     @GetMapping("/jpa/users")
     public List<User> retrieveAllUsers() {
-        return repository.findAll();
+        return userRepository.findAll();
     }
 
     // api for get one user
     @GetMapping("/jpa/users/{userid}")
     public EntityModel<User> retrieveUser(@PathVariable int userid) {
-        Optional<User> user = repository.findById(userid);
+        Optional<User> user = userRepository.findById(userid);
         if (user == null) {
             throw new UserNotFoundException("id: " + userid);
         }
@@ -57,12 +57,12 @@ public class UserJpaResource {
 
     @DeleteMapping("/jpa/users/{userid}")
     public void deleteUserById(@PathVariable int userid) {
-        repository.deleteById(userid);
+        userRepository.deleteById(userid);
     }
 
     @GetMapping("/jpa/users/{userid}/posts")
     public List<Post> retrievePostssForUser(@PathVariable int userid) {
-        Optional<User> user = repository.findById(userid);
+        Optional<User> user = userRepository.findById(userid);
         if (user == null) {
             throw new UserNotFoundException("id: " + userid);
         }
@@ -72,7 +72,7 @@ public class UserJpaResource {
     // api to add a new user, using talend api tester extension to test post on browser
     @PostMapping("/jpa/users")
     public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
-        User saveduser = repository.save(user);
+        User saveduser = userRepository.save(user);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(saveduser.getId())
@@ -84,7 +84,7 @@ public class UserJpaResource {
 
     @PostMapping("/jpa/users/{userid}/posts")
     public ResponseEntity<Object> createPostForUser(@PathVariable int userid, @Valid @RequestBody Post post) {
-        Optional<User> user = repository.findById(userid);
+        Optional<User> user = userRepository.findById(userid);
         if (user == null) {
             throw new UserNotFoundException("id: " + userid);
         }

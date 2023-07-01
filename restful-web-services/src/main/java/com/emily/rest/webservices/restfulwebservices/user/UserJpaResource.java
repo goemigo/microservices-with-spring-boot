@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.emily.rest.webservices.restfulwebservices.jpa.PostRepository;
 import com.emily.rest.webservices.restfulwebservices.jpa.UserRepository;
 
 import jakarta.validation.Valid;
@@ -25,10 +26,12 @@ import jakarta.validation.Valid;
 public class UserJpaResource {
 
     private UserRepository repository;
+    private PostRepository PostRepository;
 
-    public UserJpaResource(UserRepository repository) {
+    public UserJpaResource(UserRepository repository,PostRepository PostRepository) {
 
         this.repository = repository;
+        this.PostRepository = PostRepository;
     }
 
     // api for get all users
@@ -57,8 +60,16 @@ public class UserJpaResource {
         repository.deleteById(userid);
     }
 
-    // api to add a new user, using talend api tester extension to test post on
-    // browser
+    @GetMapping("/jpa/users/{userid}/posts")
+    public List<Post> retrievePostssForUser(@PathVariable int userid) {
+        Optional<User> user = repository.findById(userid);
+        if (user == null) {
+            throw new UserNotFoundException("id: " + userid);
+        }
+        return user.get().getPosts();
+    }
+
+    // api to add a new user, using talend api tester extension to test post on browser
     @PostMapping("/jpa/users")
     public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
         User saveduser = repository.save(user);
@@ -68,6 +79,23 @@ public class UserJpaResource {
                 .toUri();
         // return the status code for this post request and the URI of the newly created
         // resource
+        return ResponseEntity.created(location).build();
+    }
+
+    @PostMapping("/jpa/users/{userid}/posts")
+    public ResponseEntity<Object> createPostForUser(@PathVariable int userid, @Valid @RequestBody Post post) {
+        Optional<User> user = repository.findById(userid);
+        if (user == null) {
+            throw new UserNotFoundException("id: " + userid);
+        }
+        post.setUser(user.get());
+        Post savedPost = PostRepository.save(post);
+
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(savedPost.getId())
+                .toUri();
+
         return ResponseEntity.created(location).build();
     }
 

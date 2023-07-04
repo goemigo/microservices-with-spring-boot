@@ -24,13 +24,14 @@ public class CurrencyConversion {
     }
 
     
-    public CurrencyConversion(Long id, String from, String to, BigDecimal conversionMultiple, BigDecimal quantity) {
+    public CurrencyConversion(Long id, String from, String to, BigDecimal conversionMultiple, BigDecimal quantity,String environment) {
         this.id = id;
         this.from = from;
         this.to = to;
         this.conversionMultiple = conversionMultiple;
         this.quantity = quantity;
         this.totalCalculatedAmount = this.quantity.multiply(this.conversionMultiple);
+        this.environment = environment;
     }
 
 

@@ -2,10 +2,22 @@ package com.emi.microservices.currencyexchangeservice;
 
 import java.math.BigDecimal;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+
+@Entity //this annotation will create a table in h2 called Currency_Exchange
 public class CurrencyExchange {
+
+    @Id
     private Long id;
+
+    @Column(name="currency_from") //to avoid syntax error becasue "from" is a keyword in SQL
     private String from;
+
+    @Column(name="currency_to")
     private String to;
+
     private BigDecimal conversionMultiple;
     private String environment;
 

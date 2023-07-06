@@ -1,6 +1,6 @@
 # Docker
 ## Images
-- https://hub.docker.com/u/in28min
+- https://hub.docker.com/u/emilydockgo
 - Currency Exchange Service
   - emilydockgo/mmv2-currency-conversion-service:0.0.1-SNAPSHOT
 - Currency Conversion Service
